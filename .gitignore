@@ -5,11 +5,13 @@ node_modules/
 # VSCode
 .vscode/
 
-# OS/system files
-.DS_Store
+# System files (OneDrive, Windows, MacOS)
+~$*
+*.tmp
 Thumbs.db
 desktop.ini
+.DS_Store
 
-# OneDrive sync files
-~$*
+# Git junk
+*.log
 
