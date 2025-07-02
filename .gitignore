@@ -1,2 +1,15 @@
+# Node
 node_modules/
 .env
+
+# VSCode
+.vscode/
+
+# OS/system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# OneDrive sync files
+~$*
+
