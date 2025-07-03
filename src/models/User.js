@@ -26,7 +26,10 @@ name: {
     type: String,
     required: true,
     enum: ["male", "female", "other"]
-  }
+  },
+  profilePic: {
+  type: String, 
+}
 }, { timestamps: true });
 
 module.exports = mongoose.model("User", userSchema);

@@ -5,7 +5,6 @@ const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
 
-
 // @route    POST /api/auth/signup
 // @desc     Register a new user
 // @access   Public
@@ -60,9 +59,17 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d" 
-    });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    sameSite: "Lax", // or "Strict" for more security
+    secure: process.env.NODE_ENV === "production", // true in prod
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  })
+  .status(200)
+  .json({ message: "Login successful" });
+
 
     res.status(200).json({
       message: "Login successful",
@@ -80,6 +87,11 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("token").json({ message: "Logged out" });
+});
+
 
 
 

@@ -16,4 +16,10 @@
 
     Made /login
 
+    Made /profile
+    Made /profile/edit 
+        Added multer for profile pictures - a middleware that handles multipart/form-data — that’s how browsers send files (like images) when you upload them.
+
     
+
+
