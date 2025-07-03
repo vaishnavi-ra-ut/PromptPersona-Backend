@@ -2,13 +2,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const authRoutes = require("./src/routes/auth");
-const profileRoutes = require("./src/routes/profile");
-const personaRoutes = require("./src/routes/persona");
 const fs = require("fs");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 
+const authRoutes = require("./src/routes/auth");
+const profileRoutes = require("./src/routes/profile");
+const personaRoutes = require("./src/routes/persona");
+const chatRouter = require("./src/routes/chat");
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/personas", personaRoutes);
+app.use("/api/chat", chatRouter);
 
 const PORT = process.env.PORT || 5000;
 

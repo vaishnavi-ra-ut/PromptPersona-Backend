@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Persona = require("../models/Persona");
 const authMiddleware = require("../middlewares/userAuth");
+const optionalAuth =  require("../middlewares/optionalAuth")
+
 
 const defaultPersonas = [
   {
@@ -25,28 +27,24 @@ const defaultPersonas = [
 ];
 
 
-// @route    GET /api/personas/
-// @desc     Checks if the user is logged in , if yes , then show their feed
-// @access   Private
-router.get("/", authMiddleware, async (req, res) => {
+// @route GET /api/personas/
+// @desc Checks if the user is logged in , if yes , then let them use everything , if not just ket them see the UI
+// @access HYBRID
+router.get("/", optionalAuth, async (req, res) => {
   try {
-    const userPersonas = await Persona.find({ createdBy: req.user.id });
+    let userPersonas = [];
+
+    if (req.user) {
+      userPersonas = await Persona.find({ createdBy: req.user._id });
+    }
 
     res.json({
       default: defaultPersonas,
       custom: userPersonas
     });
   } catch (err) {
-    res.status(500).json({ error: "Server is unable to loading personas" });
+    res.status(500).json({ error: "Server is unable to load personas" });
   }
-});
-
-
-// @route    GET /api/personas/default
-// @desc     Default api for guest users
-// @access   Public
-router.get("/default", (req, res) => {
-  res.json({ default: defaultPersonas });
 });
 
 
