@@ -2,33 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Persona = require("../models/Persona");
 const authMiddleware = require("../middlewares/userAuth");
-const optionalAuth =  require("../middlewares/optionalAuth")
-
-
-const defaultPersonas = [
-  {
-    name: "TherapistGPT",
-    description: "A calm, empathetic AI therapist.",
-    prompt: "You are a compassionate therapist who listens patiently and helps users process emotions.",
-    icon: "🧠"
-  },
-  {
-    name: "MentorGPT",
-    description: "A wise and motivational career mentor.",
-    prompt: "You are a career mentor who guides users through doubts with encouragement and practical advice.",
-    icon: "🎓"
-  },
-  {
-    name: "Job Interviewer",
-    description: "Simulates technical and HR interviews.",
-    prompt: "You are a professional interviewer asking questions for job preparation.",
-    icon: "💼"
-  }
-];
+const optionalAuth =  require("../middlewares/optionalAuth");
+const defaultPersonas = require("../utils/defaultPersonas");
 
 
 // @route GET /api/personas/
-// @desc Checks if the user is logged in , if yes , then let them use everything , if not just ket them see the UI
+// @desc Returns default + user-created personas
 // @access HYBRID
 router.get("/", optionalAuth, async (req, res) => {
   try {
@@ -43,6 +22,7 @@ router.get("/", optionalAuth, async (req, res) => {
       custom: userPersonas
     });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Server is unable to load personas" });
   }
 });

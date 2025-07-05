@@ -31,6 +31,7 @@
     Made /messages api to send messages to persona
     Made /history to see the chats history
     Made /user-chats to see all the chats till now with different personas
+    Made /delete/:chatId
 
     Made an optionAuth for those who do not want to sign-up or log-in
 

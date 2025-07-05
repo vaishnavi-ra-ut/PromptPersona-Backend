@@ -23,38 +23,24 @@ router.get("/", requireAuth, async (req, res) => {
 // @route    PUT /api/profile/edit
 // @desc     Helps to edit the logged-in user's profile
 // @access   Private
-router.put("/edit", requireAuth, upload.single("profilePic"), async (req, res) => {
+router.put("/edit", requireAuth, async (req, res) => {
   try {
-    const { name, age, gender, profilePicUrl } = req.body;
-    const updateData = {};
+    const { name, age, gender } = req.body;
 
+    const updateData = {};
     if (name) updateData.name = name;
     if (age) updateData.age = age;
     if (gender) updateData.gender = gender;
 
-    if (req.file) {
-      updateData.profilePic = `/uploads/${req.file.filename}`;
-    } else if (profilePicUrl) {
-      updateData.profilePic = profilePicUrl;
-    }
-
     const updatedUser = await User.findByIdAndUpdate(req.user, updateData, { new: true });
 
-    // Convert relative path to full URL
-    const updated = updatedUser.toObject(); // so we can modify
-        if (updated.profilePic && !updated.profilePic.startsWith("http")) {
-            updated.profilePic = `${req.protocol}://${req.get("host")}${updated.profilePic}`;
-        }
-
-    res.json({
-        message: "Profile updated successfully",
-        user: updated
-    });
-
+    res.json(updatedUser);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
+    console.error("Profile update error:", err);
+    res.status(500).json({ error: "Failed to update profile" });
   }
 });
+
+
 
 module.exports = router;

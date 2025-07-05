@@ -5,7 +5,6 @@ const Message = require("../models/Message");
 const userAuth = require("../middlewares/userAuth");
 
 
-
 // @route POST /api/chat/start
 // @desc Start a new chat with selected persona
 // @access Private
@@ -117,6 +116,57 @@ router.get("/user-chats", userAuth, async (req, res) => {
   }
 });
 
+
+// @route DELETE /api/chat/delete/:chatId
+// @desc So users can remove their chats.
+// @access Private
+router.delete("/delete/:chatId", userAuth, async (req, res) => {
+  try {
+    const chatId = req.params.chatId;
+    const chat = await Chat.findById(chatId);
+
+    if (!chat) {
+      return res.status(404).json({ error: "Chat not found" });
+    }
+
+    if (chat.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Unauthorized to delete this chat" });
+    }
+
+    await Message.deleteMany({ chat: chat._id });
+    await Chat.findByIdAndDelete(chat._id);
+
+    res.json({ message: "Chat deleted successfully" });
+
+  } catch (err) {
+    res.status(500).json({ error: "Server error while deleting chat" });
+  }
+});
+
+
+// @route DELETE /api/chat/delete/:messageId
+// @desc So users can remove particular messages from their chat.
+// @access Private
+router.delete("/delete/:messageId", userAuth, async (req, res) => {
+  try {
+    const message = await Message.findById(req.params.messageId);
+
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    if (message.sender.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Unauthorized to delete this message" });
+    }
+
+    await message.deleteOne();
+
+    res.json({ message: "Message deleted successfully" });
+    
+  } catch (err) {
+    res.status(500).json({ error: "Server error while deleting message" });
+  }
+});
 
 
 module.exports = router;

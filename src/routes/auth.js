@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const JWT_SECRET = process.env.JWT_SECRET || "yourSecret";
 
 
 // @route    POST /api/auth/signup
@@ -11,6 +12,7 @@ const jwt = require("jsonwebtoken");
 router.post("/signup" , async(req , res) => {  
     try{
         const { name, email, password, age, gender } = req.body;
+
         if (!name || !email || !password || !age || !gender) {
             return res.status(400).json({ error: "All fields are required" });
         }
@@ -30,12 +32,25 @@ router.post("/signup" , async(req , res) => {
         });
         await newUser.save();
 
-        res.status(201).json({ message: "User created successfully" });
-    }
-    catch(err){
-         res.status(500).json({ error: "Server error" });
-    }
-})
+        const token = jwt.sign({ id: newUser._id }, JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+        res.status(201).json({
+      message: "User created successfully",
+      token,
+      user: {
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        age: newUser.age,
+        gender: newUser.gender,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 
 // @route    POST /api/auth/login
@@ -61,27 +76,27 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-  res.cookie("token", token, {
+  res
+  .cookie("token", token, {
     httpOnly: true,
-    sameSite: "Lax", // or "Strict" for more security
-    secure: process.env.NODE_ENV === "production", // true in prod
-    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    sameSite: "Lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   })
   .status(200)
-  .json({ message: "Login successful" });
+  .json({
+    message: "Login successful",
+    token,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      age: user.age,
+      gender: user.gender,
+      profileImage: user.profileImage || null
+    },
+  });
 
-
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        age: user.age,
-        gender: user.gender
-      }
-    });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Server error" });
@@ -91,8 +106,6 @@ router.post("/login", async (req, res) => {
 router.post("/logout", (req, res) => {
   res.clearCookie("token").json({ message: "Logged out" });
 });
-
-
 
 
 module.exports = router;
