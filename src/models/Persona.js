@@ -25,7 +25,11 @@ const personaSchema = new mongoose.Schema({
   createdByName: {
     type: String,
     default: "Anonymous"
-  }
+  },
+    avatar: {
+      type: String,
+      default: "https://example.com/default-avatar.png",
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Persona", personaSchema);

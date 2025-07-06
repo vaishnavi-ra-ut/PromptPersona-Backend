@@ -11,7 +11,8 @@ const chatSchema = new mongoose.Schema(
       name: String,
       description: String,
       prompt: String,
-      icon: String
+      icon: String,
+      avatar: String,
     },
     messages: [
       {

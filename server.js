@@ -5,6 +5,7 @@ const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const aiChatRoute = require("../Backend/src/utils/aiChat");
 
 const authRoutes = require("./src/routes/auth");
 const profileRoutes = require("./src/routes/profile");
@@ -24,7 +25,7 @@ app.use(cors({
 
 app.use(cookieParser());
 
-app.use("/uploads", express.static("uploads"));
+app.use("/api/ai", aiChatRoute);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
