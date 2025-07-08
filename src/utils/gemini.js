@@ -1,19 +1,11 @@
-require("dotenv").config();  // ✅ Make sure to load env
-
+require("dotenv").config();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const apiKey = process.env.AI_KEY;
-
-if (!apiKey) {
-  console.error("❌ Gemini API key is missing! Please set AI_KEY in your .env file.");
-  throw new Error("Missing Gemini API key");
-}
-
-const genAI = new GoogleGenerativeAI(apiKey);
-
+const genAI = new GoogleGenerativeAI(process.env.AI_KEY);
 
 async function generateFromGemini(prompt) {
-  const model = genAI.getGenerativeModel({
+  try {
+    const model = genAI.getGenerativeModel({
     model: "gemini-2.5-flash",  
     generationConfig: {
       temperature: 0.7,
@@ -21,8 +13,15 @@ async function generateFromGemini(prompt) {
       maxOutputTokens: 1024,
     },
   });
-  const result = await model.generateContent(prompt);
-  return result.response.text();
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    return text;
+  } catch (error) {
+    console.error("Gemini generation error:", error);
+    throw new Error("Gemini AI failed to respond");
+  }
 }
 
 module.exports = generateFromGemini;

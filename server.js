@@ -25,12 +25,11 @@ app.use(cors({
 
 app.use(cookieParser());
 
-app.use("/api/ai", aiChatRoute);
-
 app.use("/api/auth", authRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/personas", personaRoutes);
 app.use("/api/chat", chatRouter);
+app.use("/api/ai", aiChatRoute);
 
 const PORT = process.env.PORT || 5000;
 
