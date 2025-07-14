@@ -1,35 +1,71 @@
+// src/utils/aiChat.js
 const express = require("express");
 const router = express.Router();
 const userAuth = require("../middlewares/userAuth");
 const generateFromGemini = require("../utils/gemini");
+const Message = require("../models/Message");
 
 router.post("/generate", userAuth, async (req, res) => {
-  const { message, personaPrompt } = req.body;
+  const { message, personaPrompt, chatId } = req.body;
 
-  if (!message || !personaPrompt) {
-    return res.status(400).json({ error: "Missing input or persona" });
+  if (!message || !personaPrompt || !chatId) {
+    return res.status(400).json({ error: "Missing input, persona, or chat ID" });
   }
 
-  const prompt = `
+  try {
+    // Step 1: Fetch last 5 messages for chat context
+    const recentMessages = await Message.find({ chat: chatId })
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .lean();
+
+    const historyText = recentMessages
+      .reverse()
+      .map((msg) => `${msg.sender === "user" ? "User" : "AI"}: ${msg.content}`)
+      .join("\n");
+
+    // Step 2: Final formatted prompt
+    const finalPrompt = `
 ${personaPrompt}
-Stay in character. Keep the response short, clear, and specific.
-Ensure your response is complete and does not end mid-sentence.
-Keep your responses brief and focused. Aim for 1-2 small paragraphs.
-You are a helpful AI assistant. Your task is to respond to user messages based on the provided persona prompt.
- Additional instructions:
-- If the user's message contains spelling or grammar mistakes, try your best to understand it and respond accordingly.
-- If the message is unclear or ambiguous, kindly ask for clarification.
-- Never return a blank or empty reply.
-Now respond to the user message:
+
+Conversation so far:
+${historyText}
+
+Now respond to the user's latest message:
 "${message}"
+
+⚠️ Stay in character. Keep your reply focused, concise, and on-topic.
+- Handle spelling mistakes gracefully.
+- If unclear, ask user to clarify.
+- Never return a blank or half answer.
+- Keep it short and readable.
 `;
 
-  try {
-    const reply = await generateFromGemini(prompt);
-    res.json({ reply });
+    // Step 3: Generate response from Gemini
+    const aiReply = await generateFromGemini(finalPrompt);
+
+    if (!aiReply || !aiReply.trim()) {
+      return res.status(500).json({ error: "AI generated an empty response" });
+    }
+
+    // Step 4: Save user message
+    await Message.create({
+      chat: chatId,
+      sender: "user",
+      content: message
+    });
+
+    // Step 5: Save AI reply
+    await Message.create({
+      chat: chatId,
+      sender: "ai",
+      content: aiReply
+    });
+
+    res.json({ reply: aiReply });
   } catch (err) {
     console.error("🔥 AI route failed:", err);
-    res.status(500).json({ error: "Failed to generate AI response" });
+    res.status(500).json({ error: "Failed to generate AI response. Try rephrasing your message." });
   }
 });
 

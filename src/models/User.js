@@ -27,6 +27,7 @@ name: {
     required: true,
     enum: ["male", "female", "other"]
   },
+  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Persona" }],
   profilePic: {
   type: String, 
 }

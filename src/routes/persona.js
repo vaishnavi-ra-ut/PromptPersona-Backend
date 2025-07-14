@@ -33,7 +33,7 @@ router.get("/", optionalAuth, async (req, res) => {
 // @access   Private
 router.post("/custom" , authMiddleware, async (req, res) => {
   try {
-    const { name, description, prompt, icon } = req.body;
+    const { name, description, prompt, icon , avatar} = req.body;
 
     if (!name || !description || !prompt) {
       return res.status(400).json({ error: "Name, description, and prompt are required." });
@@ -44,6 +44,8 @@ router.post("/custom" , authMiddleware, async (req, res) => {
         description,
         prompt,
         icon: icon || "🤖",
+        category: "Your Personas",
+        avatar ,
         createdBy: req.user.id,
         createdByName: req.user.name
     });
@@ -113,6 +115,7 @@ router.delete("/delete/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
 
 
 module.exports = router;

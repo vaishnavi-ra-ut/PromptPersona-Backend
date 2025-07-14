@@ -11,6 +11,7 @@ const authRoutes = require("./src/routes/auth");
 const profileRoutes = require("./src/routes/profile");
 const personaRoutes = require("./src/routes/persona");
 const chatRouter = require("./src/routes/chat");
+const favoriteRoutes = require("./src/routes/Fav");
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/personas", personaRoutes);
 app.use("/api/chat", chatRouter);
 app.use("/api/ai", aiChatRoute);
+app.use("/api/routes/Fav", favoriteRoutes);
 
 const PORT = process.env.PORT || 5000;
 

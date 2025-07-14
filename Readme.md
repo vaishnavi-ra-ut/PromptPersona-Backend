@@ -1,4 +1,66 @@
-# Started PromptPersona
+🧠 Prompt Persona — Backend
+This is the Express + MongoDB backend powering Prompt Persona — an AI chatbot platform with customizable personas.
+
+![alt text](image.png)
+
+🚀 Features
+User Authentication
+
+Signup/Login with JWT (stored in HttpOnly cookies)
+
+Secure password hashing (bcrypt)
+
+Session auto-login & logout support
+
+Profile Management
+
+Edit name, age, gender
+
+Gender used to show avatars on frontend
+
+AI Integration
+
+/ai/generate route using Google Gemini API
+
+Persona-specific prompt injected with user messages
+
+Persona System
+
+Fetch default + user-created personas
+
+Create, edit, and delete custom personas (auth required)
+
+🛠️ Tech Stack
+Node.js + Express
+
+MongoDB + Mongoose
+
+JWT, bcrypt, cookie-parser, CORS
+
+📂 Folder Highlights
+bash
+Copy
+Edit
+/routes      → Auth, Profile, AI, Personas
+/models      → User & Persona schemas
+/middlewares → Auth checks (required & optional)
+⚙️ .env Example
+env
+Copy
+Edit
+PORT=5000
+MONGO_URI=yourMongoDB_URI
+JWT_SECRET=yourSecret
+GEMINI_API_KEY=yourGeminiKey
+🧪 Running Locally
+bash
+Copy
+Edit
+npm install
+npm run dev
+
+
+# Personal Notes
     Initialized node , express , mongoose
     Initialized Git
 

@@ -20,7 +20,7 @@ const personaSchema = new mongoose.Schema({
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    default: null // default personas will have no creator
+    default: null 
   },
   createdByName: {
     type: String,
@@ -28,7 +28,11 @@ const personaSchema = new mongoose.Schema({
   },
     avatar: {
       type: String,
-      default: "https://example.com/default-avatar.png",
+      default: "https://i.postimg.cc/RZrtWmbz/freepik-a-funny-avatar-of-an-animal-wearing-glasses-and-a-22489-removebg-preview.png",
+    },
+    category: {
+      type: String,
+      default: "Your Personas",
     }
 }, { timestamps: true });
 
