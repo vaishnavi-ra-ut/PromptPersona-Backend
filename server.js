@@ -5,7 +5,7 @@ const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const aiChatRoute = require("../Backend/src/utils/aiChat");
+const aiChatRoute = require("./src/utils/aiChat");
 
 const authRoutes = require("./src/routes/auth");
 const profileRoutes = require("./src/routes/profile");
