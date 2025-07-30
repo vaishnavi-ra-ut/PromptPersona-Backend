@@ -15,9 +15,9 @@ const favoriteRoutes = require("./src/routes/Fav");
 
 dotenv.config();
 
-app.set("trust proxy", 1); 
-
 const app = express();
+
+app.set("trust proxy", 1); 
 
 app.use(cors({
   origin: "https://prompt-persona-frontend.vercel.app",  
