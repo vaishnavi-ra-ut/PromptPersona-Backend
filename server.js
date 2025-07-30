@@ -22,6 +22,12 @@ app.use(cors({
   credentials: true    
 }));
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://prompt-persona-frontend.vercel.app");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
+
 
 app.use(express.json()); 
 
